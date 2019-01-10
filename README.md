@@ -1,4 +1,6 @@
 # ShellCommand
+提供三个接口execute，readOutput，readOutputLines
+
 ```c++
 class ShellCommand
 {
