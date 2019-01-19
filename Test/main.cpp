@@ -10,6 +10,6 @@ int main(int argc, char *argv[])
 
     QString cmd = "ls";
 
-    qDebug()<<ShellCommand::readOutputLines(cmd);
+    qDebug()<<ShellCommand::execute(cmd);
     return a.exec();
 }

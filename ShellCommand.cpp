@@ -10,32 +10,27 @@ Email:  2088201923@qq.com
 
 bool ShellCommand::execute(const QString &cmd, const QStringList &arguments)
 {
-    QString newCmd;
-    newCmd.append(cmd);
-    if (! arguments.isEmpty())
-        newCmd.append(" " + arguments.join(" "));
-
-    FILE *fp = popen(qPrintable(newCmd), "r");
-    if (fp == NULL)
-        return false;
-
-    int status = pclose(fp);
-    if (status == -1)
-        return false;
-
-    if (! WIFEXITED(status)) {
-        return false;
-    }
-
-    // 141 == SIGPIPE
-    if (WEXITSTATUS(status) != 141) {
-        return false;
-    }
-
-    return true;
+    QString result = "";
+    return execute(cmd, arguments, result);
 }
 
 QString ShellCommand::readOutput(const QString &cmd, const QStringList &arguments)
+{
+    QString result = "";
+    execute(cmd, arguments, result);
+
+    return result;
+}
+
+QStringList ShellCommand::readOutputLines(const QString &cmd, const QStringList &arguments)
+{
+    QStringList results;
+    results = readOutput(cmd, arguments).trimmed().split("\n");
+
+    return results;
+}
+
+bool ShellCommand::execute(const QString &cmd, const QStringList &arguments, QString &result)
 {
     QString newCmd;
     newCmd.append(cmd);
@@ -44,7 +39,7 @@ QString ShellCommand::readOutput(const QString &cmd, const QStringList &argument
 
     FILE *fp = popen(qPrintable(newCmd), "r");
     if (fp == NULL)
-        return "";
+        return false;
 
     QFile file;
     if (! file.open(fp, QIODevice::ReadOnly)) {
@@ -52,14 +47,18 @@ QString ShellCommand::readOutput(const QString &cmd, const QStringList &argument
         return "";
     }
 
-    QString result = QString(file.readAll()).trimmed();
+    result = QString(file.readAll());
 
-    pclose(fp);
+    file.close();
 
-    return result;
-}
+    int status = pclose(fp);
+    fp = NULL;
 
-QStringList ShellCommand::readOutputLines(const QString &cmd, const QStringList &arguments)
-{
-    return readOutput(cmd, arguments).split("\n");
+    if (status == -1 ||
+        !WIFEXITED(status) ||
+        WEXITSTATUS(status) != 0) {
+        return false;
+    }
+
+    return true;
 }

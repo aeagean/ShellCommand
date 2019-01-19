@@ -17,6 +17,9 @@ public:
     static QString readOutput(const QString &cmd, const QStringList &arguments = QStringList());
 
     static QStringList readOutputLines(const QString &cmd, const QStringList &arguments = QStringList());
+
+private:
+    static bool execute(const QString &cmd, const QStringList &arguments, QString &result);
 };
 
 #endif // SHELLCOMMAND_H
