@@ -47,7 +47,7 @@ bool ShellCommand::execute(const QString &cmd, const QStringList &arguments, QSt
         return "";
     }
 
-    result = QString(file.readAll());
+    result = QString(file.readAll()).trimmed();
 
     file.close();
 

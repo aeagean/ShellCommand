@@ -8,8 +8,8 @@ int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
 
-    QString cmd = "ls";
+    QString cmd = "ls MyShellCommand";
 
-    qDebug()<<ShellCommand::execute(cmd);
+    qDebug()<<ShellCommand::readOutput(cmd);
     return a.exec();
 }
