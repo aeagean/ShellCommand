@@ -44,7 +44,7 @@ bool ShellCommand::execute(const QString &cmd, const QStringList &arguments, QSt
     QFile file;
     if (! file.open(fp, QIODevice::ReadOnly)) {
         pclose(fp);
-        return "";
+        return false;
     }
 
     result = QString(file.readAll()).trimmed();
